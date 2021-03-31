@@ -1,0 +1,31 @@
+sys.setrecursionlimit(10000)
+
+MAXVAL=600
+
+rule all:
+    input:
+        expand("simulations/gen_{maxval}.fa",maxval=MAXVAL)
+
+for p in range(0, MAXVAL+1):
+    rule:
+        input: "simulations/gen_{param}.fa".format(param=p)
+        output: "simulations/gen_{param}.fa".format(param=(p+1))
+        params:
+            str(p),
+            out_prefix="simulations/gen_{param}".format(param=(p+1)),
+            out_name="gen_{param}".format(param=(p+1))
+        shell: 
+            "/home/people/stud007/incerta/Software/Mutation-Simulator/mutation-simulator.py -o {params.out_prefix} {input} rmt /home/people/stud007/incerta/benchmarkmito/Simulations/rCRS.rmt",
+            "cat {params.out_prefix} | sed 's/NC_012920.1/{params.out_name}/g' > simulations/gen_(p+1)_label.fa"
+
+for p in range(10, MAXVAL+1, 10):
+    rule:
+        input:
+            input_1="simulations/gen_0.fa",
+            input_2="simulations/gen_{param}.fa".format(param=p)
+        output: "simulations/gen_{param}.nw".format(param=p)
+        params:
+            str(p),
+            out_prefix="simulations/gen_{param}".format(param=p)
+        shell:
+            "/home/people/stud007/incerta/Software/EMBOSS-6.5.7/emboss/needle -gapopen 10.0 -gapextend 0.5 -outfile simulations/{params.out_prefix} -asequence simulations/{input.input_1} -bsequence simulations/            {input.input_2}"
