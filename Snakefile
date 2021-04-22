@@ -1,19 +1,14 @@
 sys.setrecursionlimit(10000)
 
-MAXVAL=600
+STEPSFRAGSIM=["0","10","20","30","40","50","100","150","200","300","400","500","600"]
 
 rule all:
-    input:
-        expand("simulations/gen_{maxval}.fa",maxval=MAXVAL)
+    input: expand("simulations/gen_{steps}_n1000_l200.fa",steps=STEPSFRAGSIM)
 
-rule simulations_mt:
-    input: "simulations/gen_0.fa"
-    output: expand("simulations/gen_{idx}.fa", idx=range(1, MAXVAL+1))
-    shell: "/home/incerta/gabriel/Software/mitochondrialSimulator/mitochondrialSimulator.py -g {MAXVAL} -o simulations/gen --name=generation /home/incerta/gabriel/Software/mitochondrialSimulator/rCRS_0_005.conf {input}"
-
-for p in range(0, MAXVAL+1, 100):
+for p in STEPSFRAGSIM:
     rule:
         input: "simulations/gen_{param}.fa".format(param=p)
-        output: "simulations/gen_100.msa"
-        params: str(p)
-        shell: "cat {input} > {output}"
+        output: "simulations/gen_{param}_n1000_l200.fa".format(param=p)
+        shell: "/home/incerta/jana/Software/gargammel/src/fragSim  -n 1000 -l 200 {input} | {output}"
+
+
