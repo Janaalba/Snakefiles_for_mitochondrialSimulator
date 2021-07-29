@@ -33,3 +33,9 @@ rule runmsacat:
     output: "simulations/all.fasta"
     shell: "cat {input} > {output}"
 
+#run mafft
+rule runmafft:
+    input:  "simulations/all.fasta"
+    output:  "simulations/all_mafft.fasta"
+    shell: "/home/incerta/gabriel/Software/mafft-7.475-without-extensions/core/mafft --auto {input} > {output}"
+
