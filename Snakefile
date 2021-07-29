@@ -2,6 +2,7 @@ sys.setrecursionlimit(10000)
 
 MAXVAL=600
 STEPS10=range(10, MAXVAL, 10)
+STEPSMSA=["0","10","20","30","40","50","100","150","200","300","400","500","600"]
 
 rule all:
     input:
@@ -26,4 +27,9 @@ for p in STEPS10:
             str(p),
             out_prefix="simulations/gen_{param}".format(param=p)
         shell: "/home/people/stud007/incerta/Software/EMBOSS-6.5.7/emboss/needle -gapopen 10.0 -gapextend 0.5 -outfile {output} -asequence {input.input_1} -bsequence {input.input_2}"
+
+rule runmsacat:
+    input:  expand("simulations/gen_{idx}.fa",idx=STEPSMSA)
+    output: "simulations/all.fasta"
+    shell: "cat {input} > {output}"
 
