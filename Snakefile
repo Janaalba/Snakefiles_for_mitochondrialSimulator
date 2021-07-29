@@ -39,3 +39,12 @@ rule runmafft:
     output:  "simulations/all_mafft.fasta"
     shell: "/home/incerta/gabriel/Software/mafft-7.475-without-extensions/core/mafft --auto {input} > {output}"
 
+#run prank
+rule runprank:
+    input:  "simulations/all.fasta"
+    output: "simulations/all_prank.best.fas"
+    params:
+        outprefix="simulations/all_prank"
+    shell: "/home/incerta/gabriel/Software/prank-msa/src/prank -d={input} -showall -o={params.outprefix} -DNA"
+
+
