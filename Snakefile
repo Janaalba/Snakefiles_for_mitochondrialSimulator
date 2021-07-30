@@ -14,6 +14,7 @@ rule all:
         expand("simulations/gen_{maxval}.fa",maxval=MAXVAL),
         expand("simulations/gen_{steps}.nw",steps=STEPS10)
 
+
 rule simulations_mt:
     input: "simulations/gen_0.fa"
     output: expand("simulations/gen_{idx}.fa", idx=range(1, MAXVAL+1))
@@ -50,3 +51,10 @@ rule runprank:
     params:
         outprefix="simulations/all_prank"
     shell: "/home/incerta/gabriel/Software/prank-msa/src/prank -d={input} -showall -o={params.outprefix} -DNA"
+
+
+rule faidx:
+    input: "simulations/gen_{step}.fa"
+    output: "simulations/gen_{step}.fa.fai"
+    shell: "/home/incerta/gabriel/Software/samtools/samtools faidx {input}"
+
