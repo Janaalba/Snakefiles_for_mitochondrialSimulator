@@ -3,12 +3,16 @@ sys.setrecursionlimit(10000)
 MAXVAL=600
 STEPS10=range(10, MAXVAL, 10)
 STEPSMSA=["0","10","20","30","40","50","100","150","200","300","400","500","600"]
+LENGTHS=["30","35","40","45","50","55","60","65","75","85","100","150","200","400"]
+RATES=["0.00010","0.00015","0.00020","0.00025","0.0003","0.00035","0.0004","0.00045","0.0005","0.0006","0.0007","0.0008","0.0009","0.001","0.003","0.005","0.007","0.009","0.01","0.03","0.05","0.07","0.09","0.1","0.3","0.5","0.7","0.9"]
+DAMAGE=["dhigh","dmid","single","none"]
+NUMFRAGS=1000000
+FRAGNUM=175000
 
 rule all:
     input:
         expand("simulations/gen_{maxval}.fa",maxval=MAXVAL),
-        expand("simulations/gen_{steps}.nw",steps=STEPS10),
-
+        expand("simulations/gen_{steps}.nw",steps=STEPS10)
 
 rule simulations_mt:
     input: "simulations/gen_0.fa"
@@ -46,5 +50,3 @@ rule runprank:
     params:
         outprefix="simulations/all_prank"
     shell: "/home/incerta/gabriel/Software/prank-msa/src/prank -d={input} -showall -o={params.outprefix} -DNA"
-
-
