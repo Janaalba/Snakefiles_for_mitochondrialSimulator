@@ -4,13 +4,16 @@ MAXVAL=600
 STEPS10=range(10, MAXVAL, 10)
 STEPSMSA=["0","10","20","30","40","50","100","150","200","300","400","500","600"]
 LENGTHS=["30","35","40","45","50","55","60","65","75","85","100","150","200","400"]
+DAMAGE=["dhigh","dmid","single","none"]
 NUMFRAGS=1000000
 
 rule all:
     input:
         expand("simulations/gen_{maxval}.fa",maxval=MAXVAL),
         expand("simulations/gen_{steps}.nw",steps=STEPS10),
-        expand("simulations/gen_{steps}_n{nfrag}_l{fraglen}.fa.gz",steps=STEPSMSA,nfrag=NUMFRAGS,fraglen=LENGTHS)
+        expand("simulations/gen_{steps}_n{nfrag}_l{fraglen}.fa.gz",steps=STEPSMSA,nfrag=NUMFRAGS,fraglen=LENGTHS),
+        expand("simulations/gen_{steps}_n{nfrag}_l{fraglen}_d{dam}.fa.gz",steps=STEPSMSA,nfrag=NUMFRAGS,fraglen=LENGTHS,dam=DAMAGE)
+
 
 rule simulations_mt:
     input: "simulations/gen_0.fa"
@@ -66,4 +69,14 @@ rule fragsim:
     shell:
         "/home/incerta/jana/Software/gargammel/src/fragSim  -n {wildcards.nfrags} -l {wildcards.fraglen} --circ generation_{wildcards.step} {input.input_1} | gzip > {output}"
 
+
+rule deamsim:
+    input:
+        "simulations/gen_{step}_n{nfrags}_l{fraglen}.fa.gz"
+    output:
+        "simulations/gen_{step}_n{nfrags}_l{fraglen}_d{dam}.fa.gz"
+    wildcard_constraints:
+        fraglen="\d+"
+    shell:
+        "/home/incerta/jana/Software/gargammel/src/deamSim  -matfile {wildcards.dam}  {input} | gzip > {output}"
 
